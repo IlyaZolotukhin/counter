@@ -1,40 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from './Button';
+import s from './Counter.module.css'
 
 function Counter() {
     const [count, setCount] = useState(0);
-    const [maxValue, setMaxValue] = useState<number | null>(null);
-    const [startValue, setStartValue] = useState<number | null>(null);
-
-    useEffect(() => {
+    const [maxValue, setMaxValue] = useState<number>(() => {
         const storedMaxValue = localStorage.getItem('maxValue');
+        return storedMaxValue ? JSON.parse(storedMaxValue) : 0;
+    });
+
+    const [startValue, setStartValue] = useState<number>(() => {
         const storedStartValue = localStorage.getItem('startValue');
-        if (storedMaxValue && storedStartValue) {
-            setMaxValue(parseInt(storedMaxValue));
-            setStartValue(parseInt(storedStartValue));
-        }
-    }, []);
+        return storedStartValue ? JSON.parse(storedStartValue) : 0;
+    });
 
     useEffect(() => {
-        localStorage.setItem('maxValue', maxValue?.toString() ?? '');
-        localStorage.setItem('startValue', startValue?.toString() ?? '');
+        localStorage.setItem('maxValue', JSON.stringify(maxValue));
+        localStorage.setItem('startValue', JSON.stringify(startValue));
     }, [maxValue, startValue]);
 
     const onClickCountButton = () => {
-        if (count < (maxValue ?? 5)) {
+        if (count < maxValue) {
             setCount(count + 1);
         }
     };
 
     const onClickResetButton = () => {
-        setCount(startValue ?? 0);
+        setCount(startValue ?? 0);//посмотреть задание
     };
 
     const onChangeMaxValue = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(event.target.value);
-        if (newValue <= (startValue ?? 0)) {
+        if (newValue <= startValue) {
             event.target.classList.add('error');
-            setMaxValue(null);
+            setMaxValue(newValue);
         } else {
             event.target.classList.remove('error');
             setMaxValue(newValue);
@@ -43,9 +42,9 @@ function Counter() {
 
     const onChangeStartValue = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(event.target.value);
-        if (newValue < 0 || newValue >= (maxValue ?? 5)) {
+        if (newValue < 0 || newValue >= maxValue) {
             event.target.classList.add('error');
-            setStartValue(null);
+            setStartValue(newValue);
         } else {
             event.target.classList.remove('error');
             setStartValue(newValue);
@@ -67,26 +66,34 @@ function Counter() {
         }
     }*/
 
+    const isSetButtonDisabled = startValue < 0 || maxValue <= startValue;
+    const isCountButtonDisabled = count >= maxValue;
+    const isResetButtonDisabled = count === 0;
+
     return (
         <div className="App">
-            <div className="settings">
+            <div className={s.settings}>
                 <div>
                     <span>Max value: </span>
-                    <input type="number" min="1" max="100" value={maxValue ?? ''} onChange={onChangeMaxValue} />
+                    <input type="number"  value={maxValue} onChange={onChangeMaxValue} />
                 </div>
                 <div>
                     <span>Start value: </span>
-                    <input type="number" min="0" max={(maxValue ?? 5) - 1} value={startValue ?? ''} onChange={onChangeStartValue} />
+                    <input type="number" value={startValue} onChange={onChangeStartValue} />
                 </div>
-                <Button name="Set" ButtonCallBack={onClickSetButton} maxValue={maxValue }startValue={startValue} count={count}/>
+                <Button name="Set" disabled={isSetButtonDisabled}
+                        ButtonCallBack={onClickSetButton} />
             </div>
-            <div className="result">
+            <div className={s.result}>
                 {/*<div style={{ color: count === (maxValue ?? 5) ? 'red' : 'black' }}>{countMessage}</div>*/}
                 <div>{count}</div>
-            </div>
+
             <div className="btn">
-                <Button name="Count" ButtonCallBack={onClickCountButton} count={count} />
-                <Button name="Reset" ButtonCallBack={onClickResetButton} count={count} />
+                <Button name="Count" disabled={isCountButtonDisabled}
+                        ButtonCallBack={onClickCountButton} />
+                <Button name="Reset" disabled={isResetButtonDisabled}
+                        ButtonCallBack={onClickResetButton} />
+            </div>
             </div>
         </div>
     );
