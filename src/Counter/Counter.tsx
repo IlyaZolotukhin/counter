@@ -64,11 +64,11 @@ function Counter() {
             <div className={s.settings}>
                 <div className={s.inputBlock}>
                     <div>
-                        <Input value={maxValue} class={maxValue <= startValue}
+                        <Input value={maxValue} isError={maxValue <= startValue}
                                name={"Max value"} onChangeCallBack={onChangeMaxValue}/>
                     </div>
                     <div>
-                        <Input value={startValue} class={startValue < 0 || startValue >= maxValue}
+                        <Input value={startValue} isError={startValue < 0 || startValue >= maxValue}
                                name={"Start value"} onChangeCallBack={onChangeStartValue}/>
                     </div>
                 </div>
@@ -82,7 +82,7 @@ function Counter() {
                      className={s.count}>{count}</div>
 
                 <div className={s.btn}>
-                    <Button name="Count" disabled={isCountButtonDisabled}
+                    <Button name="Count" disabled={isResetButtonDisabled}
                             ButtonCallBack={onClickCountButton}/>
                     <Button name="Reset" disabled={isResetButtonDisabled}
                             ButtonCallBack={onClickResetButton}/>

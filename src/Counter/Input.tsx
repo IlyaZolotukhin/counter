@@ -3,7 +3,7 @@ import s from './Counter.module.css'
 
 type InputPropsType = {
     onChangeCallBack: (event: ChangeEvent<HTMLInputElement>) => void
-    class: boolean
+    isError: boolean
     name: string
     value: number|string
 }
@@ -13,7 +13,7 @@ export const Input = (props: InputPropsType) => {
         <div>
             <span>{props.name}: </span>
             <input
-                className={props.class ? s.error : ""}
+                className={props.isError ? s.error : ""}
                 type="number"
                 value={props.value}
                 onChange={props.onChangeCallBack}
